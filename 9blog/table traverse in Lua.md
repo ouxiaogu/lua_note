@@ -10,6 +10,7 @@ Operations associated with this data type allow:
 - the lookup of the value associated with a particular key
 
 *fig 1: a associative arrays example*
+
 <code>
   table1 = {
     fred = 'one';             
@@ -19,6 +20,7 @@ Operations associated with this data type allow:
     [111]='dict_val111'; 
     40,30} 
 </code> 
+
 notice of this table:
 - **key** should not have a quotation , so 'fred' = 'two' is not correct; and ***key** would not accept a number, a number would be interpreted as a array index, must write within a pair of bracket `[]`, *[0]='dict_val0'*
 - just like double quotes `"` is the same with single quote `'` in Lua, comma `,` and semicolon `;` is equivalent in Lua ,but for the  uniformity of programming style, we can use comma `,` as the same type of value type, and semicolon `;` for different value type.  
@@ -34,6 +36,7 @@ notice of this table:
 then we will use **pairs** and **ipairs** to traverse the table
 
 *fig 2. traverse table with pairs*
+
 <code>
   for i, v in pairs(table1) do
     print(v);
@@ -41,6 +44,7 @@ then we will use **pairs** and **ipairs** to traverse the table
 </code>
 
 **pairs** : transverse all the array index&values and pairs key&value.
+
 >pairs output:
   20
   10
@@ -59,6 +63,7 @@ then we will use **pairs** and **ipairs** to traverse the table
 </code>
 
 **ipairs**: transverse all the array indexes&values: 
+
 >ipairs output:
   1
   2
@@ -81,6 +86,7 @@ the original Lua function **unpack** is write in C. **unpack** can return a cont
 we can also define a **unpack** function in Lua
 
 *fig 5. self defined  unpack function*
+
 <code>
   function unpack(t, i)
     i = i or 1
