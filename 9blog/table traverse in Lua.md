@@ -11,7 +11,7 @@ Operations associated with this data type allow:
 
 *fig 1: a associative arrays example*
 
-<code>
+...
   table1 = {
     fred = 'one';             
     alpha= {'two', 'three'}; 
@@ -19,7 +19,7 @@ Operations associated with this data type allow:
     [0]='dict_val0',
     [111]='dict_val111'; 
     40,30} 
-</code> 
+... 
 
 notice of this table:
 - **key** should not have a quotation , so 'fred' = 'two' is not correct; and ***key** would not accept a number, a number would be interpreted as a array index, must write within a pair of bracket `[]`, *[0]='dict_val0'*
@@ -37,11 +37,11 @@ then we will use **pairs** and **ipairs** to traverse the table
 
 *fig 2. traverse table with pairs*
 
-<code>
+...
   for i, v in pairs(table1) do
     print(v);
   end
-</code>
+...
 
 **pairs** : transverse all the array index&values and pairs key&value.
 
@@ -56,11 +56,11 @@ then we will use **pairs** and **ipairs** to traverse the table
   table: 004EAED0
 
 *fig 3. traverse table with pairs*
-<code>
+...
   for k in ipairs(table1) do
     print(k);
   end
-</code>
+...
 
 **ipairs**: transverse all the array indexes&values: 
 
@@ -77,17 +77,17 @@ the original Lua function **unpack** is write in C. **unpack** can return a cont
 
 *fig 4. an example of unpack function*
 
-<code>
+...
   f = string.find
   a = {"hello", "ll"}
   print(f(unpack(a)))
-</code>
+...
 
 we can also define a **unpack** function in Lua
 
 *fig 5. self defined  unpack function*
 
-<code>
+...
   function unpack(t, i)
     i = i or 1
     if t[i] then
@@ -97,4 +97,4 @@ we can also define a **unpack** function in Lua
   table1 = { 'have', 'a', 'nice', 'life',[1001]='god',[1002]='knows' };
   print(unpack(table1, 2) );
   print(unpack(table1, 1001) );
-</code>
+...
