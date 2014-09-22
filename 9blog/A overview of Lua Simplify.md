@@ -16,7 +16,7 @@
       lua_dostring(line);
     }
 
-### main concepts of Lua:
+### 1 main concepts of Lua:
 
 
 1. embedded programming language
@@ -28,7 +28,7 @@
 7. Lua is language framework
 8. easy to write an interactive , standalone interpreter for Lua
 
-### Lua environment & execution unit 
+### 2 Lua environment & execution unit 
 
 1. All statements in Lua are executed in a global environment, which keeps all global variables and functions.This environment is initialized at the beginning of the host program and persists until its end.
 2. The unit of execution of Lua is call a chunk 
@@ -38,7 +38,7 @@
     2. the statements execute in sequential order
 
 
-### Variables and values in lua
+### 3 Variables and values in lua
 
 *Code2.  simple config method*
 
@@ -50,7 +50,7 @@
 2. Lua is a dynamically typed language : `variables have no types` ; `only values do`
 3. It means , `all values carry their own type.` and `no variable type definition in Lua`
 
-### more configs from control flow and functions define.
+more powerful configurations can be written using flow control and function definitions. 
 
 *code 3. Config file using functions*
 
@@ -66,15 +66,13 @@
     width, height = Bound(420, 500)
     if monochrome then color = "black" else color = "blue" end
 
-more powerful configurations can be written using flow control and function definitions. 
-
 1. Pascal-like syntax, with reserved words and explicitly terminated blocks; 
 2. semicolons are optional.
 3. familiar , robust and easily parsed.
 4. functions can return multiple values, and multiple assignments can be used to collect these values
 5. reference pointer like parameter passing is discarded , that less many small semantic difficulties
 
-### Lua Values
+#### Lua Values type
 
 1. Functions —— *first class* value in Lua
   1. a function definition creates a value of type **function**, and assign this value to a global variable ( e.g. **Bound** in code 3) .
@@ -98,14 +96,14 @@ more powerful configurations can be written using flow control and function defi
     + associative arrays
     + arrays that can be indexed not only with integers, but with strings, reals, tables, and function values.
 
-### Associative arrays
+### 4 Associative arrays
 
 1. Associative arrays are a powerful language construct 
 2. Most typical data containers, like ordinary arrays, sets, bags, and symbol tables, can be directly implemented by tables. 
 3. Tables can also simulate records by simply using field names as indices.
 4. Lua supports to use `a.name` as syntactic sugar for `a["name"]`.
 
-#### tables pros&cons
+##### 4.1 tables pros&cons
 1. tables in Lua are not  bound to a variable name;
 2. they are dynamically created objects that can be manipulated much like pointers in conventional languages. 
 3. The disadvantage of this choice is that a table must be explicitly created before used.
@@ -125,7 +123,7 @@ more powerful configurations can be written using flow control and function defi
       current.value = i
       current.next = list
 
-#### table create methods
+##### 4.2 table create methods
 
 1. simplest, by expression *{}*
   
@@ -147,10 +145,12 @@ more powerful configurations can be written using flow control and function defi
       window1 = {x = 200, y = 300, foreground = "blue"}
     
 
-##### create list
+##### 4.3 create list
 just like table, list can created by *{}*
 
-  ```colors = {"blue", "yellow", "red", "green", "black"}```
+  ```
+  colors = {"blue", "yellow", "red", "green", "black"}
+  ```
   which is equivalent to:
   ```
     colors = {}
@@ -158,7 +158,7 @@ just like table, list can created by *{}*
     colors[4] = "green"; colors[5] = "black"
   ```
 
-##### confused: high level abstractions ?
+> **confused** : high level abstractions ?
 How to implement high level abstractions in Lua.
 As it said ," Lua is dynamically typed, it provides user controlled type constructors."
 
@@ -167,9 +167,9 @@ As it said ," Lua is dynamically typed, it provides user controlled type constru
 ```
 
 
-#### table traverse
+##### 4.4 table traverse
 
-##### *next* function
+###### *next* function
 
 *code 5.  Function to clone a generic object using next*
 
@@ -226,7 +226,7 @@ As it said ," Lua is dynamically typed, it provides user controlled type constru
   end
 ```
 
-#### object-oriented programming
+#### 4.5 object-oriented programming of table
 
 Because functions are first class values, `table fields` can refer to functions. This property allows the implementation of some interesting object-oriented facilities, which are made easier by syntactic sugar for defining and calling `methods`.
 
@@ -255,12 +255,12 @@ That is, an anonymous function is created and stored in a table field; moreover,
   ```
   In words, the receiver of the method is passed as its first argument, giving the expected meaning to the parameter self.    
 
-difference and co of C++ like class in Lua:
+difference and common of C++ like class in Lua:
 - it does not provide `information hiding`
 - it does not provide classes; each object carries its operations.
 - this construction is extremely light (only syntactic sugar), and classes can be simulated using inheritance,
 
-### fallbacks
+### 5 fallbacks
 Their own functions to handle error conditions; such functions are called *fallback functions*.
 
 call the **setfallback** function to set a fallback function. With two arguments: a string indentifying the fallback, and the new function to be called whenever the corresponding condition occurs.
@@ -272,7 +272,7 @@ Lua supports the following fallbacks, identified by the given strings:
 - "**function**" - Called when Lua tries to call a non function value. It receives as arguments the non unction value and the arguments given in the original call. Its return values are the final results of the call operation. The default function issues an error.
 - "**gc**" - Called during the garbage collection. It receives as argument the table being collected, and nil to signal the end of garbage collection. The default function does nothing.
 
-#### Using fallbacks
+#### 5.1 Using fallbacks
 
 *code 8: An example to use a more object oriented style of interpreting*
 
@@ -336,7 +336,7 @@ z10=add(z7,z9)
   end
 ```
 
-#### Inheritance via fallbacks
+#### 5.2 Inheritance via fallbacks
 Certainly, one of the most interesting uses of fallbacks is in implementing inheritance in Lua.
 1. fallback and callback common & difference ？
 2. Simple inheritance allows an object to look for the value of an absent field in another object, called its *parent*; in particular, this field can be a method. 
@@ -365,7 +365,7 @@ Certainly, one of the most interesting uses of fallbacks is in implementing inhe
   a = {parent = a1, godparent = {parent = a2, godparent = a3}}
 ```
 
-### Conclusion
+### 6 Conclusion
 Nowadays, many programs are written in two different languages: one for writing a powerful “virtual machine”, and another for writing single programs for this machine.Lua is a language designed specifically for the latter task. It is small: as already noted, the whole library is around six thousand lines of ANSI C. It is portable: Lua is being used in platforms ranging from PC-DOS to CRAY. It has a simple syntax and a simple semantics. And it is flexible.
 
 some unusual mechanisms that make the language highly extensible. 
