@@ -130,7 +130,7 @@ more powerful configs can be written using flow control and function definitions
 1. simplest, by expression *{}*
   
   influenced by the format of BibTex,
-  <code>
+  ```
     @inproceedings{liu2012full,
     title={A full-chip 3D computational lithography framework},
     author={Liu, Peng and Zhang, Zhengfan and Lan, Song and Zhao, Qian and Feng, Mu and Liu, Hua-yu and Vellanki, Venu and Lu, Yen-wen},
@@ -139,32 +139,32 @@ more powerful configs can be written using flow control and function definitions
     year={2012},
     organization={International Society for Optics and Photonics}
   }
-  </code>
+  ```
 
   table definition could be like this:
     *exp = { key1= {val1_1}, key2={ val2_1, val2_2 } }* 
-    <code>
+    ```
       window1 = {x = 200, y = 300, foreground = "blue"}
-    </code>
+    ```
 
 ##### creat list
 just like table, list can created by *{}*
 
-  <code>colors = {"blue", "yellow", "red", "green", "black"}</code>
+  ```colors = {"blue", "yellow", "red", "green", "black"}```
   which is equivalent to:
-  <code>
+  ```
     colors = {}
       colors[1] = "blue";  colors[2] = "yellow"; colors[3] = "red"
       colors[4] = "green"; colors[5] = "black"
-  </code>
+  ```
 
 ##### confused: high level abstractions ?
 How to implement high level abstractions in Lua.
 As it sayed ," Lua is dynamically typed, it provides user controlled type constructors."
 
-<code>
+```
   window1 = Window{ x = 200, y = 300, foreground = "blue" }
-</code>
+```
 
 
 #### table transerve
@@ -173,7 +173,7 @@ As it sayed ," Lua is dynamically typed, it provides user controlled type constr
 
 *code 5.  Function to clone a generic object using next*
 
-<code>
+```
   function clone (o)
     local new_o = {}           -- creates a new object
     local i, v = next(o,nil)   -- get first index of "o" and its value
@@ -183,7 +183,7 @@ As it sayed ," Lua is dynamically typed, it provides user controlled type constr
     end
     return new_o
   end
-</code>
+```
 
 *next* 
   *next (table , index)*  traverses a table
@@ -194,7 +194,7 @@ As it sayed ," Lua is dynamically typed, it provides user controlled type constr
   *nextvar(index)*  traverses the global variables of Lua
 
 *code 6: Function to save Lua environment*
-<code>
+```
   function save ()
     local env = {}             -- create a new table
     local n, v = nextvar(nil)  -- get first global var and its value
@@ -204,10 +204,10 @@ As it sayed ," Lua is dynamically typed, it provides user controlled type constr
     end
     return env
   end
-</code>
+```
 
 *code 7: Function to restore a Lua environment.*
-<code>
+```
   function restore (env)
     -- save some built-in functions before erasing global environment
     local nextvar, next, setglobal = nextvar, next, setglobal
@@ -224,35 +224,35 @@ As it sayed ," Lua is dynamically typed, it provides user controlled type constr
      n, v = next(env, n)
     end
   end
-</code>
+```
 
 #### object-oriented programming
 
 Because functions are first class values, `table fields` can refer to functions. This property allows the implementation of some interesting object-oriented facilities, which are made easier by syntactic sugar for defining and calling `methods`.
 
 1. `method` definition
-  <code>
+  ```
     function object:method (params)
-      ...
+      ```
     end
-  </code>
+  ```
   Which is equivalent to
-  <code>
+  ```
     function dummy_name (self, params)
-      ...
+      ```
     end
     object.method = dummy_name
-  </code>
+  ```
 That is, an anonymous function is created and stored in a table field; moreover, this function has a hidden parameter called *self*.
 
 2. `method` call
-  <code>
+  ```
       receiver:method(params)
-  </code>
+  ```
   which is translated to
-  <code>
+  ```
     receiver.method(receiver,params)
-  </code>
+  ```
   In words, the receiver of the method is passed as its first argument, giving the expected meaning to the parameter self.    
 
 difference and co of C++ like class in Lua:
@@ -276,7 +276,7 @@ Lua supports the following fallbacks, identified by the given strings:
 
 *code 8: An example to use a more object oriented style of interpreting*
 
-<code>
+```
   function dispatch (receiver, parameter, operator)
     if type(receiver) == "table" then
       return receiver[operator](receiver, parameter)
@@ -285,7 +285,7 @@ Lua supports the following fallbacks, identified by the given strings:
     end
   end
   oldFallback = setfallback("arith", dispatch)
-</code>
+```
 
 - With this case, if **a** is a table, then expressions like **a+b**,will been executed as **a:add(b)**.
 - Notice the use of the global variable **oldFallback** to chain fallback functions.
@@ -302,7 +302,7 @@ z10=add(z7,z9)
 ##### arithmetic expressions to represent complex calculations
 
 *code 9.An optimizing arithmetic expression compiler in Lua.*
-<code>
+```
   n=0                            -- counter of temporary variables
   T={}                           -- table of temporary variables
 
@@ -324,7 +324,7 @@ z10=add(z7,z9)
     return t
   end
 
-  create("a") create("b") create("c") ... create("z")
+  create("a") create("b") create("c") ``` create("z")
 
   while 1 do                     -- read expressions
     local s=read()
@@ -332,7 +332,7 @@ z10=add(z7,z9)
     dostring("E="..s)             -- execute fake assignment
     print(s.."="..E.name.."\n")
   end
-</code>
+```
 
 #### Inheritance via fallbacks
 Certainly, one of the most interesting uses of fallbacks is in implementing inheritance in Lua.
@@ -340,7 +340,7 @@ Certainly, one of the most interesting uses of fallbacks is in implementing inhe
 2. Simple inheritance allows an object to look for the value of an absent field in another object, called its *parent*; in particular, this field can be a method. 
 
 *code 10. Implementing simple inheritance in Lua.*
-<code>
+```
   function Inherit (object, field)
     if field == "parent" then     -- avoid loops
       return nil
@@ -354,14 +354,14 @@ Certainly, one of the most interesting uses of fallbacks is in implementing inhe
   end
 
   setfallback("index", Inherit)
-</code>
+```
 
 3. One way to implement simple inheritance in Lua is to store the parent object in a distinguished field, called parent for instance, and set an index fallback function as shown in Figure 10.
 4. multiple inheritance can also be implemented.using *godparent* to achieve double inheritance , and double inheritance can model generic multiple inheritance. e.g. *a* inherits from *a1*, *a2* and *a3* in the below case.
 
-<code>
+```
   a = {parent = a1, godparent = {parent = a2, godparent = a3}}
-</code>
+```
 
 ### The use of Lua in real applications
 
@@ -370,7 +370,7 @@ Certainly, one of the most interesting uses of fallbacks is in implementing inhe
 Lua initially arose for supporting two different applications that had their own, but limited, extension languages. One of these applications is a tool for visualizing lithology profiles obtained from geological probes. 
 
 *description of a lithology profile object in lua*
-<code>
+```
   Grid{
     name = "log",
     log = TRUE,
@@ -380,13 +380,13 @@ Lua initially arose for supporting two different applications that had their own
     step_line = Line {color = RED, width = SIMPLE},
     tick_line = Line {color = CORAL}
   }  
-</code>
+```
 
 #### Storing structured graphical metafiles
 
 Another important use of Lua is for the storage of structured graphical metafiles.The generic drawing editor TeCDraw, developed by TeCGraf, saves metafiles containing `high level descriptions`, in Lua, `of the graphic objects` that compose the drawing. 
 
-<code>
+```
   line{
      x = { 0.0, 1.0 },
      y = { 5.0, 8.0 },
@@ -403,7 +403,7 @@ Another important use of Lua is for the storage of structured graphical metafile
      y = 1.0,
      r = 5.0
   }
-</code>
+```
 
 #### High level, generic graphical data entry
 

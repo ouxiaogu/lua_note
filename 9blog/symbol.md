@@ -36,11 +36,12 @@
     * do not interpret any escape sequences
     * ignore long brackets of any other level
     * 
-    <code>
+    
+    ```
            a = [==[
            alo
            123"]==]
-    </code>
+    ```
     
 
 
