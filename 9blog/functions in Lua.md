@@ -322,7 +322,9 @@ end
 this program use _tail call_ to run the game.
 
 room 1 --- room 2
+
   |         |
+
 room 3 --- room 4(win!)
 
 
