@@ -1,6 +1,6 @@
 ## Lua Syntax
 
-### Associative arrays traverse
+### 1 Associative arrays traverse
 
 In computer science, an **associative array**, **map**, **symbol table**, or **dictionary** is an abstract data type composed of a collection of *(key, value)* pairs, such that each possible key appears at most once in the collection.
 Operations associated with this data type allow:
@@ -10,7 +10,6 @@ Operations associated with this data type allow:
 - the lookup of the value associated with a particular key
 
 *fig 1: a associative arrays example*
-
 ```
   table1 = {
     fred = 'one';             
@@ -31,9 +30,9 @@ notice of this table:
       [0]='dict_val0';
       [111]='dict_val111'  } are pairs type data. *(key, value)* 
 
-#### pairs & ipairs : traverse all pairs & array
+#### 1.1 pairs: traverse pairs ,  ipairs: array
 
-then we will use **pairs** and **ipairs** to traverse the table
+we will use **pairs** and **ipairs** to traverse the table
 
 *fig 2. traverse table with pairs*
 
@@ -72,7 +71,7 @@ then we will use **pairs** and **ipairs** to traverse the table
 
 when use   for i,v in ipairs(table1) do print(v) end , it will print all the array values.
 
-#### unpack : traverse continuous array index
+#### 1.2 unpack : traverse continuous array index
 the original Lua function **unpack** is write in C. **unpack** can return a continuous array until meeting a line-end symbol. 
 
 *fig 4. an example of unpack function*

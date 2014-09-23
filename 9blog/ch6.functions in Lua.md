@@ -8,9 +8,13 @@ As it's illustrated in "a overview of Lua", Functions is the *first class* value
 - can be returned by other functions
 
 既然函数是值，那么表达式也可以创建函数了，Lua中我们经常这样写：
-```function foo (x) return 2*x end```
+```
+function foo (x) return 2*x end
+```
 其实这是利用Lua提供的“语法上的甜头” （ syntactic sugar ）的结果，实际上原本的函数为：
-```foo = function (x) return 2*x end```
+```
+foo = function (x) return 2*x end
+```
 So, a function definition is in fact a statement (an assignment, more specially)that creates a value of type `function` and assigns it to a variable.
 我们用 function (x) ``` end 来定义一个function和使用 {} 创建一个table一样。
 

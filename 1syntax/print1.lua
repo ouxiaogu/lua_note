@@ -20,7 +20,7 @@ for e in list_iter(helpful_guys) do
 end
 
 -- [[
--- 	D:\Note\lua\0syntax>lua print.lua
+-- 	D:\Note\lua\0syntax>lua print.luaf
 -- 	lua: print.lua:3: attempt to call field 'getn' (a nil value)
 -- 	stack traceback:
 -- 	        print.lua:3: in function 'list_iter'
