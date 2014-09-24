@@ -13,36 +13,35 @@ function get_val( t1 )
 end
 
 -- ### 1. for loop 1
--- print(#table1);
--- for element in get_val(table1) do
---   print (element)
--- end
-
--- ### 2. for loop 2
--- iter_t = get_val(table1);
--- for element in iter_t do
---   if element ~= nil then
---     print(element)
---   end
--- end
-
-
--- ### 3. while loop
-iter_t2 = get_val(table1);
-while true do
-  local element = iter_t2()
-  if element == nil then
-    break
-  end
-  print(element);
+print(#table1);
+for element in get_val(table1) do
+  print (element)
 end
 
--- ### 4. for loop 3
-iter_t3 = get_val(table1);
-for i = 1, #table1, 1 do
-  local element = iter_t3();
+-- ### 2. for loop 2
+iter_t = get_val(table1);
+for element in iter_t do
   if element ~= nil then
     print(element)
   end
 end
+
+-- ### 3. while loop
+-- iter_t2 = get_val(table1);
+-- while true do
+--   local element = iter_t2()
+--   if element == nil then
+--     break
+--   end
+--   print(element);
+-- end
+
+-- ### 4. for loop 3
+-- iter_t3 = get_val(table1);
+-- for i = 1, #table1, 1 do
+--   local element = iter_t3();
+--   if element ~= nil then
+--     print(element)
+--   end
+-- end
 
