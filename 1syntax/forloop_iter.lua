@@ -2,7 +2,7 @@ table1 = {fred='one';alpha={'two', 'three'}; 20,10; [0]='dict_val0',[111]='dict_
 
 function get_val( t1 )
   local i = 0
-  local n = #t1; -- table.getn(t1);
+  local n = table.getn(t1); -- table.getn(t1), Lua5.0; #table Lua5.1
   return function (  )
     i=i+1
     if(i<=n) then
@@ -13,18 +13,18 @@ function get_val( t1 )
 end
 
 -- ### 1. for loop 1
-print(#table1);
+-- print(#table1)
 for element in get_val(table1) do
   print (element)
 end
 
--- ### 2. for loop 2
-iter_t = get_val(table1);
-for element in iter_t do
-  if element ~= nil then
-    print(element)
-  end
-end
+-- -- ### 2. for loop 2
+-- iter_t = get_val(table1);
+-- for element in iter_t do
+--   if element ~= nil then
+--     print(element)
+--   end
+-- end
 
 -- ### 3. while loop
 -- iter_t2 = get_val(table1);
