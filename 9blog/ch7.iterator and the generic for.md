@@ -32,6 +32,7 @@ for element in list_iter(t) do
   print(element)
 end
 ```
+
 The characters of Lua generic **for** function :
 
 1. it keeps the iterator function internally , so we do not need the iter variable;
