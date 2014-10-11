@@ -35,6 +35,7 @@ end
 
 The characters of Lua generic **for** function :
 
+
 1. it keeps the iterator function internally , so we do not need the iter variable;
 2. it call the iterator on each new iteration;
 3. it stops the loop when the iterator return nil
@@ -42,10 +43,12 @@ The characters of Lua generic **for** function :
 compare with **Loop invariants** in *introduction to algorithm*
 There are 3 things about a loop invariant.
 
+
 1. **Initialization**: It is true prior to the first iteration of the loop.
 2. **Maintenance**: If it is true before an iteration of the loop, it remains true before the next iteration.
 3. **Termination**: When the loop terminates, the invariant gives us a useful property that helps show that the algorithm is correct.
 As to the 3 things of Loop invariants, the uniqueness of generic for loop in Lua is obvious :
+
 
 1. **Initialization**: iterator function is defined within for loop
 2. **Maintenance**: call the iterator function on each new loop
