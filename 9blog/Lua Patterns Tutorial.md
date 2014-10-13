@@ -6,7 +6,6 @@ Lua patterns can match sequences of characters, where each character can be opti
 
 Reference
 
-
 1. [the Lua manual on patterns](http://www.lua.org/manual/5.1/manual.html#5.4.1) , strongly recommended to read the manual on patterns, so you know everything it offers.
 2. [Programing in Lua](http://www.lua.org/pil/20.2.html) 20.2 pattern
 3. [pattern tutorial](http://lua-users.org/wiki/PatternsTutorial) in lua-user org wiki
@@ -27,11 +26,11 @@ However ,when you not know the explicit word to find , the _character classes_ b
 2 4
 ```
 
-Here, pattern `b..` define a _character class_ that start with `b` and have a length of 3. The semanteme of this pattern can be seen more clearly in _string.match_.
+Here, pattern `b..` define a _character class_ that start with `b` and `..` matches two chars with any type . The semanteme of this pattern can be seen more clearly in _string.match_.
 
-1. `%` to identify the class
+### 1. `%` identify 
 
-
+_table 1. `%` to identify the class_
 | pattern    |  meaning      
  ------      | -------       
 |  %a        | letters        
@@ -47,23 +46,22 @@ Here, pattern `b..` define a _character class_ that start with `b` and have a le
 
 >note
 
->- An upper case version of any of those classes represents the complement of the class.
+> - An upper case version of any of those classes represents the complement of the class.
+> - e.g. `%A` is complement of `%a`, matches character of non letter 
 
 ```lua
  print(string.gsub("hello, up-down!", "%A", "."))
       --> hello..up.down. 4
-      -- 
 ```
-
 string.gsub(s, pattern, replace [, n]) 
 it can replace all instances of the _pattern_ provided with the _replacement_ .
 its return value is [s' , n], the new string and the total number of substitutions.
 
-2. magic characters
+### 2. magic characters
 ```lua
  ( ) . % + - * ? [ ^ $
 ```
-
+_table 2. magic characters list_
 | pattern    |  meaning      
  ------      | -------       
 | .   | can represent for a char of all type
@@ -106,4 +104,3 @@ print(string.gsub(s, "%b()", ""))
 
 > -  `%´ works as an escape for those magic characters, e.g. _%._ matches a dot 
 > -  _%_ can only be as an escape when pattern is used as function. otherwise , using _/_ as usual escape character
-  
