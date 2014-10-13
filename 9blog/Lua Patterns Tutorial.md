@@ -31,6 +31,7 @@ Here, pattern `b..` define a _character class_ that start with `b` and `..` matc
 ### 1. `%` identify 
 
 _table 1. `%` to identify the class_
+
 | pattern    |  meaning      
  ------      | -------       
 |  %a        | letters        
@@ -62,6 +63,7 @@ its return value is [s' , n], the new string and the total number of substitutio
  ( ) . % + - * ? [ ^ $
 ```
 _table 2. magic characters list_
+
 | pattern    |  meaning      
  ------      | -------       
 | .   | can represent for a char of all type
@@ -75,7 +77,7 @@ _table 2. magic characters list_
 | ?   | optional (0 or 1 occurrence)
 | ^   | it will match only at the beginning of the subject string
 | $   | it will match only at the end of the subject string
-| %b  | which matches balanced strings, typically used to detect delimiters `%b()', `%b[]', `%b{}', or `%b<>'
+| %b  | which matches balanced strings, typically used to detect delimiters `%b()', `%b[]', `%b{}', or `%b<>'|
 
 Then , I will give some useful examples,
 - `[_%a][_%w]*`:  matches identifiers in a Lua program: a sequence starting with a letter or an underscore, followed by zero or more underscores or alphanumeric characters.
