@@ -47,6 +47,8 @@ _table 1. `%` to identify the class_
 
 >note
 
+> -  `%´ works as an escape for those magic characters, e.g. _%._ matches a dot 
+> -  _%_ can only be as an escape when pattern is used as function. otherwise , using _/_ as usual escape character
 > - An upper case version of any of those classes represents the complement of the class.
 > - e.g. `%A` is complement of `%a`, matches character of non letter 
 
@@ -77,7 +79,7 @@ _table 2. magic characters list_
 | ?   | optional (0 or 1 occurrence)
 | ^   | it will match only at the beginning of the subject string
 | $   | it will match only at the end of the subject string
-| %b  | which matches balanced strings, typically used to detect delimiters `%b()', `%b[]', `%b{}', or `%b<>'|
+| %b  | which matches balanced strings, typically used to detect delimiters '%b()', '%b[]', '%b{}', or `%b<>'|
 
 Then , I will give some useful examples,
 - `[_%a][_%w]*`:  matches identifiers in a Lua program: a sequence starting with a letter or an underscore, followed by zero or more underscores or alphanumeric characters.
@@ -101,8 +103,3 @@ s = "a (enclosed (in) parentheses) line"
 print(string.gsub(s, "%b()", "")) 
 --> a line
 ```
-
->note
-
-> -  `%´ works as an escape for those magic characters, e.g. _%._ matches a dot 
-> -  _%_ can only be as an escape when pattern is used as function. otherwise , using _/_ as usual escape character
