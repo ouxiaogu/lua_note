@@ -45,6 +45,7 @@ local coeff = polyfit(2, modelcd ,array_defocus)
 \end{bmatrix}$$
 
 2. code
+
   1). gen the element a matrix x yx
 
 ```lua
