@@ -46,19 +46,19 @@ local coeff = polyfit(2, modelcd ,array_defocus)
 
 2. code
 
-  1). gen the element a matrix x yx
+1). gen the element a matrix x yx
 
 ```lua
 x_power[i] = x_power[i]+x[j]^i
 yx_power[i] = yx_power[i]+(x[j]^i) * y[j]
 ```
-  2). gen the element a matrix x yx
+2). gen the element a matrix x yx
 
 ```lua
 matrix[i][j]=x_power[i+n-j] -- i=0,n ; j=0,n
 matrix[i][n+1]=yx_power[i] -- the n+1 column 
 ```
-  3) Gaussian elimination
+3) Gaussian elimination
 
 ```lua
   --> Find row with the largest first value
