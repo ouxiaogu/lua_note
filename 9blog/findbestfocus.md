@@ -76,7 +76,7 @@ matrix[i][n+1]=yx_power[i] -- the n+1 column
 
 just call the polyfit function.
 
-```
+```lua
 local coeff = polyfit(2, modelcd ,array_defocus) 
 ```
 e.g BestFocusFind: focus and modelcd have already match in pairs, no need to sort.
@@ -94,7 +94,7 @@ defocus= {
   9 = -0.029
   10  = -0.0518
   11  = -0.0442
-  12  = -0.0214 -min }
+  12  = -0.0214 -- min }
 modelcd["pitch_04A7_K13_1"]  ={
     1 = 57.610888128349
     2 = 60.373536531325
@@ -327,3 +327,36 @@ defocus_array = {
 - cmpByDef = function(a, b)
 - Done = function()
 
+**appendix B：key utility function used in this stage**
+
+1). **`truncate`** function in *`autocal_util.lua`* :  keep 3 digits after the decimal point
+
+```lua
+truncate = function(a, n)
+-- generally, can keep 3 more digital numbers
+    if(a == nil)then return nil end
+    if(n == nil)then n = 3 end
+    local b = math.pow(10, n)
+    a = math.floor(a*b)
+    a = a/b
+    return a
+end
+```
+
+2). **`get_length`** function in *`autocal_util.lua | "autocal_def.lua | autocal_algo.lua`* 
+
+```lua
+get_length = function(t)
+    if("table"==type(t))then
+        local n = 0
+        for key,val in pairs(t)do
+            n = n + 1
+        end
+        return n
+    elseif("string" == type(t))then
+        return string.len(t)
+    else
+        return 0
+    end
+end
+```
