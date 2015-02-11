@@ -4,7 +4,137 @@
 [TOC]
 
 ---
-## I. Key functions
+
+## I. Flow Analysis by Stages
+
+Take GF 28nm RX as an example, FEM data: 7 focus condition, 2 off-dose condition.
+
+### 1. AppStage of whole BestFocusFind autocal job
+Compared to *DM.run_stage*, there is a hiding TccPrep option in *run_stage*.
+
+```lua
+run_stage = function(stagetype, stagename, stageoption, stageparam, tccprep)
+    local date1, time1, clock1 = get_current_time(stagename.." starting...")
+    if(tccprep == 1)then
+        local debuginfo = _DEBUG_
+        _DEBUG_ = 0
+        local tccprepparam = {}
+        tccprepparam["DistributeMode"] = "optics+fem_d"
+        tccprepparam["AppInit"] = stageparam["AppInit"]
+        tccprepparam["AppMain"] = "TccPrep"
+        tccprepparam["keeptemptcc"] = 1 
+        DM.run_stage(stagetype, stagename.."TccPrep", {}, tccprepparam)
+        _DEBUG_ = debuginfo
+    end
+    DM.run_stage(stagetype, stagename, {}, stageparam)
+    local date2, time2, clock2 = get_current_time(stagename.." finished...")
+    print_user(stagename.." runtime ("..get_run_time(os.difftime(time2, time1))..")")
+    outputResult(stagename.." runtime ("..get_run_time(os.difftime(time2, time1))..")")
+end
+```
+
+>Note
+  TccPrep stage computes TCCs. If don't set keeptemptcc = 1, TCCs computed by TccPrep stage will be invalid for later processing.
+  >  1. Users must set keeptemptcc = 1 in dm_run_stage() in TccPrep.
+  >  2. If users don't set it, next Main stage will compute TCCs again itself.
+
+Stages in BestFocusFinder job Lua:
+  
+1. run_stage("fem+", "CheckSettings", {}, {AppInit = "CheckSettingInit", AppMain = "CheckSettingMain", AppDone = "CheckSettingDone"})
+2. run_stage("fem+", "PreValidation", {}, {AppInit = "PreValidationInit", AppMain = "PreValidationMain", AppDone = "PreValidationDone"}, 1) ; (because no process as input baseline model)
+3. run_stage("fem+", "BestFocusFind", {}, {AppInit = "BestFocusFindInit", AppMain = "BestFocusFindMain", AppDone = "BestFocusFindDone"}, 1)
+
+### 2. TccPrep(AppMain) in BestFocusFindTccPrep stage
+
+```lua
+TccPrep = function()
+    print_log("TccPrep works in BestFocusFind")
+    conds = DM.get_cur_fem_conditions()
+    tcctemplate = DM.get_exposure()
+    masktemplate = DM.get_masktemplate()
+    tccs = DM.compute_tcc(tcctemplate, conds, masktemplate)
+    DM.add_fem_result(tccs)
+end
+```
+**need to be continue....**
+
+### 3. BestFocusFind stage
+Aligning with the Host-Leaf hierarchy, there are 3 functions: BestFocusFindInit(AppInit), BestFocusFindMain(AppMain) and BestFocusFindDone(AppDone).
+
+#### 3.1 BestFocusFindInit(AppInit)
+
+**need to be continue....** Programming in Lua chapter 13
+```lua
+_G["SearchConstraintsFunc"] = SearchConstraintsFunc
+_G["TccPrep"] = TccPrep
+```
+There are declaration in head:
+
+```
+local modname = "FINDBESTFOCUS"
+local M={}
+_G[modname]=M
+_LOADED[modname]=M
+setmetatable(M, {__index=_G})
+setfenv(1, M)
+```
+**Usage**:
+
+AppInit Save GUI settings and some LUA settings(such as TCCOPTIONS) to STAGE for later calibration work.
+  1. AppInit executes on both host and leaves.
+    1. STAGE executes on host, so binary must initialize the environments for STAGE. That's why AppInit executes on host.
+      1. On host, when a STAGE starts, AppInit is called.
+    2. SUBJOBS executes on leaves, some necessary information must be provided for the execution of SUBJOBs. That's why AppInit executes on leaves.
+      1. On leaf, AppInit executes just once to build some cache so that later procs will reuse the cache, and no need to run AppInit again.
+
+**Additional Actions in BestFocusFind**
+
+1. change searched variables: 
+  - resist_thickness
+  - defocus:
+    + DUV: (0.2, 1.1, 0.08)
+    + EUV: (-1.5, 2.5, 0.33)
+2. if processid ~= nil
+  - read the resist, optical, mask parameter of the best model.   
+
+#### 3.2 BestFocusFindMain(AppMain) 
+
+**Usage**:
+
+Calibrate one model using one set of variables.
+  1. One SUBJOB do nothing except AppMain. So one SUBJOB just calibrates one model using one set of variables.
+  2. The flow of AppMain is:
+    1. Compute TCCs(if TCCs are already computed by other procs, reuse them.)
+    2. Compute MI(MaskImage).
+    3. Compute AI(AerialImage).
+    4. Compute RI(ResistImage).
+    5. Compute Error(The value represents the quality of this model. Of course the smaller the Error is, the better the model is.)
+
+**Additional Actions in BestFocusFind**
+
+1. disable AEI, SEM
+2. add some gauge attribute, they all apply once to *get_gauge_attribute* , and once to *add_fem_result* 
+  - "allowedPositiveDeltaCD": *pdcd[gaugename] = tonumber(DM.get_gauge_attribute(gauge, "allowedPositiveDeltaCD"))*
+  - "allowedNegativeDeltaCD": *pdcd[gaugename] = tonumber(DM.get_gauge_attribute(gauge, "allowedNegativeDeltaCD"))*
+  - "wcd"    *DM.add_fem_result(wcd, "cd2")*
+  - "weight" *DM.add_fem_result(weight, "weight")*
+
+####  3.4. BestFocusFindDone(AppDone)
+
+**Usage**:
+
+AppDone executes after all subjobs are destroyed.
+1. AppDone only run in host
+2. Within AppDone, the GUI/DB collect all calibration job result.
+
+**Additional Actions in BestFocusFind**
+
+- DataFilter
+- BestFocusFinder 
+- FocusShiftFinder
+- computeDOF 
+
+## II. Key functions
 
 ## 1. polyfit = function(n,y,x) 
 - target equation 
@@ -368,108 +498,6 @@ likewise
 likewise
 
 
-## II. Flow Analysis by Stages
-
-Take GF 28nm RX as an example, FEM data: 7 focus condition, 2 off-dose condition.
-
-### 1. AppStage of whole BestFocusFind autocal job
-Compared to *DM.run_stage*, there is a hiding TccPrep option in *run_stage*.
-
-```lua
-run_stage = function(stagetype, stagename, stageoption, stageparam, tccprep)
-    local date1, time1, clock1 = get_current_time(stagename.." starting...")
-    if(tccprep == 1)then
-        local debuginfo = _DEBUG_
-        _DEBUG_ = 0
-        local tccprepparam = {}
-        tccprepparam["DistributeMode"] = "optics+fem_d"
-        tccprepparam["AppInit"] = stageparam["AppInit"]
-        tccprepparam["AppMain"] = "TccPrep"
-        tccprepparam["keeptemptcc"] = 1 
-        DM.run_stage(stagetype, stagename.."TccPrep", {}, tccprepparam)
-        _DEBUG_ = debuginfo
-    end
-    DM.run_stage(stagetype, stagename, {}, stageparam)
-    local date2, time2, clock2 = get_current_time(stagename.." finished...")
-    print_user(stagename.." runtime ("..get_run_time(os.difftime(time2, time1))..")")
-    outputResult(stagename.." runtime ("..get_run_time(os.difftime(time2, time1))..")")
-end
-```
-
->Note
-  TccPrep stage computes TCCs. If don't set keeptemptcc = 1, TCCs computed by TccPrep stage will be invalid for later processing.
-  >  1. Users must set keeptemptcc = 1 in dm_run_stage() in TccPrep.
-  >  2. If users don't set it, next Main stage will compute TCCs again itself.
-
-Stages in BestFocusFinder job Lua:
-  
-1. run_stage("fem+", "CheckSettings", {}, {AppInit = "CheckSettingInit", AppMain = "CheckSettingMain", AppDone = "CheckSettingDone"})
-2. run_stage("fem+", "PreValidation", {}, {AppInit = "PreValidationInit", AppMain = "PreValidationMain", AppDone = "PreValidationDone"}, 1) ; (because no process as input baseline model)
-3. run_stage("fem+", "BestFocusFind", {}, {AppInit = "BestFocusFindInit", AppMain = "BestFocusFindMain", AppDone = "BestFocusFindDone"}, 1)
-
-### 2. TccPrep(AppMain) in BestFocusFindTccPrep stage
-
-```lua
-TccPrep = function()
-    print_log("TccPrep works in BestFocusFind")
-    conds = DM.get_cur_fem_conditions()
-    tcctemplate = DM.get_exposure()
-    masktemplate = DM.get_masktemplate()
-    tccs = DM.compute_tcc(tcctemplate, conds, masktemplate)
-    DM.add_fem_result(tccs)
-end
-```
-**need to be continue....**
-
-### 3. BestFocusFind stage
-Aligning with the Host-Leaf hierarchy, there are 3 functions: BestFocusFindInit(AppInit), BestFocusFindMain(AppMain) and BestFocusFindDone(AppDone).
-
-#### 3.1 BestFocusFindInit(AppInit)
-
-**need to be continue....** Programming in Lua chapter 13
-```lua
-_G["SearchConstraintsFunc"] = SearchConstraintsFunc
-_G["TccPrep"] = TccPrep
-```
-There are declaration in head:
-
-```
-local modname = "FINDBESTFOCUS"
-local M={}
-_G[modname]=M
-_LOADED[modname]=M
-setmetatable(M, {__index=_G})
-setfenv(1, M)
-```
-**Usage**:
-
-AppInit Save GUI settings and some LUA settings(such as TCCOPTIONS) to STAGE for later calibration work.
-  1. AppInit executes on both host and leaves.
-    1. STAGE executes on host, so binary must initialize the environments for STAGE. That's why AppInit executes on host.
-      1. On host, when a STAGE starts, AppInit is called.
-    2. SUBJOBS executes on leaves, some necessary information must be provided for the execution of SUBJOBs. That's why AppInit executes on leaves.
-      1. On leaf, AppInit executes just once to build some cache so that later procs will reuse the cache, and no need to run AppInit again.
-
-**Additional Action in BestFocusFind**
-1. change searched variables: 
-  - resist_thickness
-  - defocus:
-    + DUV: (0.2, 1.1, 0.08)
-    + EUV: (-1.5, 2.5, 0.33)
-2. if processid ~= nil
-  -   
-
-#### 3.2 BestFocusFindMain(AppMain) 
-
-
-## 5. done = function()
-
-Read Result or wafer cd
-BestFocusFinder 
-FocusShiftFinder 
-
-
-
 Q1. why model cd have strange names _nils_, its meaning ?
     -- cd ; wafercd ; aicd
     -- ails
@@ -508,6 +536,7 @@ Q3. In DataFilter, why don't open filter 2?
 
 **appendix A： function list**
 
+- DataFilter = function(x, raw_y)
 - polyfit = function(n,y,x) 
 - BestFocusFinder = function(array_defocus, table_cd)
 - FocusShiftFinder = function(wafer_cd, conds)
